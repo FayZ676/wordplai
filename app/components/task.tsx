@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchTask } from "@/utils/fetchTask";
 import {
   Card,
@@ -16,11 +16,31 @@ import { Label } from "@/components/ui/label";
 export default function Task() {
   const [scene, setScene] = useState("");
   const [task, setTask] = useState("");
+  const [response, setResponse] = useState("");
+  const [isTaskComplete, setIsTaskComplete] = useState(false);
 
   async function handleSetTaskData() {
     const taskData = await fetchTask("Fantasy, Dialogue");
     setScene(taskData.scene);
     setTask(taskData.task);
+  }
+
+  function handleResponseChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const updatedResponse = event.target.value;
+    setResponse(updatedResponse);
+  }
+
+  function handleTaskCompletion() {
+    const wordCount = response
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
+    return wordCount > 10;
+  }
+
+  function handleSubmitResponse() {
+    handleTaskCompletion()
+      ? console.log(response)
+      : console.log("You still need to finish the task");
   }
 
   useEffect(() => {
@@ -48,10 +68,15 @@ export default function Task() {
         </CardContent>
         <CardContent>
           <Label htmlFor="task-response">Response</Label>
-          <Textarea id="task-response" placeholder="Your Response"></Textarea>
+          <Textarea
+            id="task-response"
+            placeholder="Your Response"
+            value={response}
+            onChange={handleResponseChange}
+          ></Textarea>
         </CardContent>
         <CardFooter>
-          <Button>Submit</Button>
+          <Button onClick={handleSubmitResponse}>Submit</Button>
         </CardFooter>
       </Card>
     </div>
