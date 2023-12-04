@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import React, { use, useEffect, useState } from "react";
 import { fetchTask } from "@/utils/fetchTask";
+import { fetchTaskFeedback } from "@/utils/fetchTaskFeedback";
 import {
   Card,
   CardContent,
@@ -12,23 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { TaskFeedbackData } from "@/utils/fetchTaskFeedback";
 
 export default function Task() {
   const [scene, setScene] = useState("");
   const [task, setTask] = useState("");
   const [response, setResponse] = useState("");
-  const [isTaskComplete, setIsTaskComplete] = useState(false);
-
-  async function handleSetTaskData() {
-    const taskData = await fetchTask("Fantasy, Dialogue");
-    setScene(taskData.scene);
-    setTask(taskData.task);
-  }
-
-  function handleResponseChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    const updatedResponse = event.target.value;
-    setResponse(updatedResponse);
-  }
+  const [feedback, setFeedback] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isProcessingResponse, setIsProcessingResponse] = useState(false);
 
   function handleTaskCompletion() {
     const wordCount = response
@@ -37,10 +31,27 @@ export default function Task() {
     return wordCount > 10;
   }
 
-  function handleSubmitResponse() {
-    handleTaskCompletion()
-      ? console.log(response)
-      : console.log("You still need to finish the task");
+  async function handleSetTaskData() {
+    const taskData = await fetchTask("Fantasy, Dialogue");
+    setScene(taskData.scene);
+    setTask(taskData.task);
+  }
+
+  async function handleSubmitResponse() {
+    setIsProcessingResponse(true);
+    if (handleTaskCompletion()) {
+      const taskFeedback = (await fetchTaskFeedback(response)).feedback;
+      setFeedback(taskFeedback);
+      errorMessage.length > 0 && setErrorMessage("");
+    } else {
+      setErrorMessage("You must complete the task before submitting.");
+    }
+    setIsProcessingResponse(false);
+  }
+
+  function handleResponseChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const updatedResponse = event.target.value;
+    setResponse(updatedResponse);
   }
 
   useEffect(() => {
@@ -75,8 +86,22 @@ export default function Task() {
             onChange={handleResponseChange}
           ></Textarea>
         </CardContent>
-        <CardFooter>
-          <Button onClick={handleSubmitResponse}>Submit</Button>
+        {feedback && (
+          <CardContent>
+            <Label htmlFor="task-feedback">Feedback</Label>
+            <CardDescription id="task-feedback">{feedback}</CardDescription>
+          </CardContent>
+        )}
+        <CardFooter className="flex justify-between">
+          {isProcessingResponse ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button onClick={handleSubmitResponse}>Submit</Button>
+          )}
+          {errorMessage && <CardDescription>{errorMessage}</CardDescription>}
         </CardFooter>
       </Card>
     </div>
