@@ -14,15 +14,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { TaskFeedbackData } from "@/utils/fetchTaskFeedback";
 
 export default function Task() {
   const [scene, setScene] = useState("");
   const [task, setTask] = useState("");
+  const [isLoadingTaskData, setIsLoadingTaskData] = useState(false);
   const [response, setResponse] = useState("");
   const [feedback, setFeedback] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessingResponse, setIsProcessingResponse] = useState(false);
+  const [isTaskCompleted, setIsTaskCompleted] = useState(false);
 
   function handleTaskCompletion() {
     const wordCount = response
@@ -32,9 +33,14 @@ export default function Task() {
   }
 
   async function handleSetTaskData() {
-    const taskData = await fetchTask("Fantasy, Dialogue");
+    setIsLoadingTaskData(true);
+    setFeedback("");
+    setResponse("");
+    const taskData = await fetchTask("Satire, Dialogue");
     setScene(taskData.scene);
     setTask(taskData.task);
+    setIsLoadingTaskData(false);
+    setIsTaskCompleted(false);
   }
 
   async function handleSubmitResponse() {
@@ -43,6 +49,7 @@ export default function Task() {
       const taskFeedback = (await fetchTaskFeedback(response)).feedback;
       setFeedback(taskFeedback);
       errorMessage.length > 0 && setErrorMessage("");
+      setIsTaskCompleted(true);
     } else {
       setErrorMessage("You must complete the task before submitting.");
     }
@@ -59,23 +66,35 @@ export default function Task() {
   }, []);
 
   return (
-    <div className="">
-      <Card>
+    <div className="min-h-full">
+      <Card className="min-h-full">
         <CardHeader>
           <CardTitle>Challenge yourself</CardTitle>
           <CardDescription>
             Do your best to respond to the scene and task provided below. You
-            will be able to access a new one once youve completed the current
-            one.
+            will be able to access a new one once you&apos;ve completed the
+            current one.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Label htmlFor="task-info">Task</Label>
-          <p id="task-info">{task}</p>
+          {isLoadingTaskData ? (
+            <CardDescription className="flex">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            </CardDescription>
+          ) : (
+            <p id="task-info">{task}</p>
+          )}
         </CardContent>
         <CardContent>
           <Label htmlFor="scene-response">Scene</Label>
-          <p id="scene-info">{scene}</p>
+          {isLoadingTaskData ? (
+            <CardDescription className="flex">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            </CardDescription>
+          ) : (
+            <p id="scene-info">{scene}</p>
+          )}
         </CardContent>
         <CardContent>
           <Label htmlFor="task-response">Response</Label>
@@ -98,6 +117,15 @@ export default function Task() {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please wait
             </Button>
+          ) : isTaskCompleted ? (
+            isLoadingTaskData ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            ) : (
+              <Button onClick={handleSetTaskData}>New Task</Button>
+            )
           ) : (
             <Button onClick={handleSubmitResponse}>Submit</Button>
           )}
