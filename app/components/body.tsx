@@ -6,7 +6,7 @@ import Divider from "./divider";
 
 export default function Body() {
   return (
-    <div className="col-start-2 col-span-2 grid gap-4 text-left">
+    <div className="col-start-2 col-span-2 flex flex-col gap-4 text-left">
       <TaskData />
       <TextArea />
       <Divider />

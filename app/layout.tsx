@@ -20,7 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-normal m-8 ${notoSerif.className}`}>
+      <body
+        className={`font-normal p-8 ${notoSerif.className} min-h-screen flex flex-col`}
+      >
         {children}
       </body>
     </html>

@@ -8,7 +8,7 @@ import RightSidebar from "./components/rightSidebar";
 
 export default async function Home() {
   return (
-    <main className="grid grid-cols-4 gap-4">
+    <main className="flex-1 grid grid-cols-4 gap-4">
       {/* <Task /> */}
       <LeftSidebar />
       <Body />
