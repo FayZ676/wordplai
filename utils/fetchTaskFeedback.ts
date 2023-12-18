@@ -6,7 +6,7 @@ export interface TaskFeedbackData {
 }
 
 const openai_instance = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function fetchTaskFeedback(
