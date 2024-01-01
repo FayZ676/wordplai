@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "AI Powered Creative Writing Coach",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;

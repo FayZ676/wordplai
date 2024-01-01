@@ -9,7 +9,7 @@ export default function Footer() {
           Complete
         </button>
       </div>
-      <Feedback />
+      {/* <Feedback /> */}
     </div>
   );
 }
