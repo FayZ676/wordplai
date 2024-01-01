@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Noto_Serif } from "next/font/google";
-import { getServerSession } from "next-auth";
-import SessionProvider from "./components/SessionProvider";
 import "./globals.css";
 
 const notoSerif = Noto_Serif({
@@ -19,16 +17,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
   return (
     <html lang="en">
-      <SessionProvider session={session}>
-        <body
-          className={`font-normal p-8 ${notoSerif.className} min-h-screen flex flex-col`}
-        >
-          {children}
-        </body>
-      </SessionProvider>
+      <body
+        className={`font-normal p-8 ${notoSerif.className} min-h-screen flex flex-col`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
