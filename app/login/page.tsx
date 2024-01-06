@@ -4,22 +4,21 @@ import React, { useState } from "react";
 import { SignIn } from "../auth/signin/route";
 import { SignUp } from "../auth/signup/route";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-export default function Login({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default function Login() {
   const router = useRouter();
 
-  const [loading, isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function handleSignIn(email: string, password: string) {
+    setIsLoading(true);
     const { data, error } = await SignIn({ email, password });
+    setIsLoading(false);
     if (error) {
       setErrorMessage(error.message);
     } else {
@@ -28,8 +27,9 @@ export default function Login({
   }
 
   async function handleSignUp(email: string, password: string) {
+    setIsLoading(true);
     const { data, error } = await SignUp({ email, password });
-
+    setIsLoading(false);
     if (error) {
       setErrorMessage(error.message);
     } else {
@@ -104,6 +104,15 @@ export default function Login({
             verify your email address.
           </p>
         )}
+        {/* {isLoading && ( */}
+        <Image
+          alt="loading image"
+          src="/svg-loaders/circles.svg"
+          width={50}
+          height={50}
+          className="text-black"
+        />
+        {/* )} */}
       </form>
     </div>
   );
