@@ -10,7 +10,7 @@ export default function Body() {
       <TaskData />
       <TextArea />
       <Divider />
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

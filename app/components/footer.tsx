@@ -1,7 +1,10 @@
+"use client";
 import React from "react";
 import Feedback from "./feedback";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Footer() {
+  const supabse = createClient();
   return (
     <div className="grid gap-4">
       <div className="text-right">
