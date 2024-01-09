@@ -66,3 +66,23 @@ export async function addActiveTask(
     },
   ]);
 }
+
+export async function addCompletedTask(
+  activeUserId: string | undefined,
+  activeTaskId: string,
+  feedback: string
+) {
+  console.log("FEEDBACK: ", feedback);
+  const { data: completedTaskData, error } = await supabase
+    .from("completed_tasks")
+    .insert([
+      {
+        user_id: activeUserId,
+        task_id: activeTaskId,
+        feedback: feedback,
+      },
+    ]);
+
+  if (error) console.error(error);
+  return completedTaskData;
+}
