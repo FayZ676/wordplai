@@ -2,7 +2,12 @@
 
 import React, { useEffect, useRef } from "react";
 
-export default function TextArea() {
+interface TextAreaProps {
+  handleChange: (updatedTaskSubmission: string) => void;
+  submission: string;
+}
+
+export default function TextArea({ handleChange, submission }: TextAreaProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -16,6 +21,10 @@ export default function TextArea() {
         // type="text"
         ref={inputRef}
         placeholder="Start typing"
+        value={submission}
+        onChange={(e) => {
+          handleChange(e.target.value)
+        }}
         className="outline-none w-full"
       />
     </div>
